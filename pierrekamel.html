@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pierre Kamel | Software Engineer</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    body {
+      background-color: #0a192f;
+      color: #e6f1ff;
+      line-height: 1.6;
+    }
+    
+    #canvas-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100vh;
+      z-index: -1;
+    }
+    
+    .container {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+    
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.5rem 0;
+      position: fixed;
+      width: 100%;
+      max-width: 1200px;
+      z-index: 100;
+      background-color: rgba(10, 25, 47, 0.9);
+    }
+    
+    .logo {
+      font-size: 2rem;
+      font-weight: bold;
+      color: #64ffda;
+    }
+    
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+    }
+    
+    .nav-links a {
+      color: #ccd6f6;
+      text-decoration: none;
+      font-size: 1rem;
+      transition: color 0.3s ease;
+    }
+    
+    .nav-links a:hover {
+      color: #64ffda;
+    }
+    
+    .header {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 8rem 0;
+    }
+    
+    .header h1 {
+      font-size: 4rem;
+      font-weight: bold;
+      margin-bottom: 1rem;
+      color: #ccd6f6;
+    }
+    
+    .header h2 {
+      font-size: 3rem;
+      font-weight: bold;
+      margin-bottom: 2rem;
+      color: #8892b0;
+    }
+    
+    .header p {
+      font-size: 1.25rem;
+      color: #8892b0;
+      max-width: 600px;
+      margin-bottom: 3rem;
+    }
+    
+    .cta-button {
+      padding: 1rem 2rem;
+      background-color: transparent;
+      color: #64ffda;
+      border: 1px solid #64ffda;
+      border-radius: 4px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-block;
+    }
+    
+    .cta-button:hover {
+      background-color: rgba(100, 255, 218, 0.1);
+    }
+    
+    section {
+      padding: 6rem 0;
+    }
+    
+    .section-title {
+      font-size: 2rem;
+      color: #ccd6f6;
+      margin-bottom: 4rem;
+      display: flex;
+      align-items: center;
+    }
+    
+    .section-title::after {
+      content: "";
+      display: block;
+      height: 1px;
+      width: 300px;
+      background-color: #233554;
+      margin-left: 1rem;
+    }
+    
+    .about-content {
+      display: flex;
+      gap: 4rem;
+      align-items: center;
+    }
+    
+    .about-text {
+      flex: 1;
+    }
+    
+    .about-text p {
+      color: #8892b0;
+      margin-bottom: 1rem;
+    }
+    
+    .skills-list {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+      list-style-type: none;
+      margin-top: 2rem;
+    }
+    
+    .skills-list li {
+      color: #8892b0;
+      position: relative;
+      padding-left: 1.5rem;
+    }
+    
+    .skills-list li::before {
+      content: "▹";
+      position: absolute;
+      left: 0;
+      color: #64ffda;
+    }
+    
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 2rem;
+    }
+    
+    .project-card {
+      background-color: #112240;
+      padding: 2rem;
+      border-radius: 4px;
+      transition: transform 0.3s ease;
+    }
+    
+    .project-card:hover {
+      transform: translateY(-10px);
+    }
+    
+    .project-card h3 {
+      color: #e6f1ff;
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+    }
+    
+    .project-card p {
+      color: #a8b2d1;
+      margin-bottom: 1.5rem;
+    }
+    
+    .project-tech {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+    
+    .project-tech span {
+      color: #a8b2d1;
+      font-size: 0.85rem;
+    }
+    
+    .experience-item {
+      margin-bottom: 4rem;
+    }
+    
+    .experience-title {
+      color: #ccd6f6;
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+    }
+    
+    .experience-company {
+      color: #64ffda;
+      margin-bottom: 1rem;
+    }
+    
+    .experience-duration {
+      color: #a8b2d1;
+      font-size: 0.9rem;
+      margin-bottom: 1rem;
+    }
+    
+    .experience-description {
+      color: #8892b0;
+    }
+    
+    .experience-description ul {
+      list-style-type: none;
+      margin-top: 1rem;
+    }
+    
+    .experience-description li {
+      position: relative;
+      padding-left: 1.5rem;
+      margin-bottom: 0.5rem;
+    }
+    
+    .experience-description li::before {
+      content: "▹";
+      position: absolute;
+      left: 0;
+      color: #64ffda;
+    }
+    
+    .contact {
+      text-align: center;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    
+    .contact p {
+      color: #8892b0;
+      margin-bottom: 2rem;
+    }
+    
+    .tech-stack {
+      margin-top: 4rem;
+    }
+    
+    .tech-icons {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+    
+    .tech-icon {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .tech-icon-circle {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background-color: #112240;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #64ffda;
+      font-size: 2rem;
+      transition: transform 0.3s ease;
+    }
+    
+    .tech-icon:hover .tech-icon-circle {
+      transform: translateY(-5px);
+    }
+    
+    .tech-icon span {
+      color: #a8b2d1;
+      font-size: 0.85rem;
+    }
+    
+    footer {
+      text-align: center;
+      padding: 2rem 0;
+      color: #8892b0;
+      font-size: 0.9rem;
+    }
+    
+    @media (max-width: 768px) {
+      .nav-links {
+        display: none;
+      }
+      
+      .header h1 {
+        font-size: 3rem;
+      }
+      
+      .header h2 {
+        font-size: 2rem;
+      }
+      
+      .about-content {
+        flex-direction: column;
+      }
+      
+      .skills-list {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="canvas-container"></div>
+  <div class="container">
+    <nav>
+      <div class="logo">PK</div>
+      <div class="nav-links">
+        <a href="#about">About</a>
+        <a href="#experience">Experience</a>
+        <a href="#projects">Projects</a>
+        <a href="#tech-stack">Tech Stack</a>
+        <a href="#contact">Contact</a>
+      </div>
+    </nav>
+    
+    <header class="header">
+      <h1>Hi, I'm Pierre Kamel</h1>
+      <h2>I build exceptional digital experiences.</h2>
+      <p>I'm a software engineer specializing in building and designing exceptional digital experiences. Currently, I'm focused on building accessible, human-centered products.</p>
+      <a href="#contact" class="cta-button">Get In Touch</a>
+    </header>
+    
+    <section id="about">
+      <h2 class="section-title">About Me</h2>
+      <div class="about-content">
+        <div class="about-text">
+          <p>Hello! My name is Pierre, and I enjoy creating things that live on the internet. My interest in software development started back when I decided to try customizing some projects — turns out that the curiosity of how things work taught me a lot about HTML & CSS!</p>
+          <p>Fast-forward to today, and I've had the privilege of working on diverse projects across various domains. My main focus these days is building accessible, inclusive products and digital experiences for a variety of clients.</p>
+          <p>Here are a few technologies I've been working with recently:</p>
+          <ul class="skills-list">
+            <li>JavaScript (ES6+)</li>
+            <li>React.js</li>
+            <li>Angular</li>
+            <li>Node.js</li>
+            <li>C#</li>
+            <li>Xamarin</li>
+            <li>React Native</li>
+            <li>Salesforce</li>
+            <li>Power BI</li>
+            <li>Three.js</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+    
+    <section id="experience">
+      <h2 class="section-title">Where I've Worked</h2>
+      <div class="experience-item">
+        <h3 class="experience-title">Senior Software Engineer</h3>
+        <div class="experience-company">Tech Innovations Inc.</div>
+        <div class="experience-duration">January 2022 - Present</div>
+        <div class="experience-description">
+          <ul>
+            <li>Developed responsive web applications using React.js and Angular</li>
+            <li>Created mobile applications with React Native and Xamarin</li>
+            <li>Implemented RESTful APIs using Node.js and C#</li>
+            <li>Integrated Salesforce solutions with existing systems</li>
+            <li>Designed interactive dashboards with Power BI</li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="experience-item">
+        <h3 class="experience-title">Full Stack Developer</h3>
+        <div class="experience-company">Digital Solutions Ltd.</div>
+        <div class="experience-duration">March 2018 - December 2021</div>
+        <div class="experience-description">
+          <ul>
+            <li>Built and maintained web applications using JavaScript frameworks</li>
+            <li>Developed backend services with Node.js and C#</li>
+            <li>Collaborated with UX designers to implement responsive designs</li>
+            <li>Optimized application performance and scalability</li>
+            <li>Mentored junior developers on best practices</li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="experience-item">
+        <h3 class="experience-title">Software Developer</h3>
+        <div class="experience-company">NextGen Solutions</div>
+        <div class="experience-duration">June 2015 - February 2018</div>
+        <div class="experience-description">
+          <ul>
+            <li>Implemented frontend components using JavaScript and React</li>
+            <li>Developed C# applications for enterprise clients</li>
+            <li>Participated in Agile development processes</li>
+            <li>Integrated third-party APIs and services</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+    
+    <section id="projects">
+      <h2 class="section-title">Some Things I've Built</h2>
+      <div class="projects-grid">
+        <div class="project-card">
+          <h3>E-commerce Platform</h3>
+          <p>A fully responsive e-commerce solution with secure payment processing, inventory management, and customer analytics.</p>
+          <div class="project-tech">
+            <span>React</span>
+            <span>Node.js</span>
+            <span>MongoDB</span>
+            <span>Stripe API</span>
+          </div>
+        </div>
+        
+        <div class="project-card">
+          <h3>Healthcare Management System</h3>
+          <p>A comprehensive platform for healthcare providers to manage patient records, appointments, and billing.</p>
+          <div class="project-tech">
+            <span>Angular</span>
+            <span>C#</span>
+            <span>.NET Core</span>
+            <span>SQL Server</span>
+          </div>
+        </div>
+        
+        <div class="project-card">
+          <h3>Real Estate Mobile App</h3>
+          <p>A cross-platform mobile application for real estate listings, featuring property search, virtual tours, and mortgage calculator.</p>
+          <div class="project-tech">
+            <span>React Native</span>
+            <span>Firebase</span>
+            <span>Google Maps API</span>
+          </div>
+        </div>
+        
+        <div class="project-card">
+          <h3>Business Intelligence Dashboard</h3>
+          <p>Interactive data visualization dashboard for business analytics, with real-time updates and customizable reports.</p>
+          <div class="project-tech">
+            <span>Power BI</span>
+            <span>SQL</span>
+            <span>DAX</span>
+          </div>
+        </div>
+        
+        <div class="project-card">
+          <h3>CRM Integration</h3>
+          <p>Custom Salesforce integration solution connecting marketing, sales, and customer service departments.</p>
+          <div class="project-tech">
+            <span>Salesforce</span>
+            <span>Apex</span>
+            <span>Lightning Web Components</span>
+          </div>
+        </div>
+        
+        <div class="project-card">
+          <h3>Inventory Tracking System</h3>
+          <p>Enterprise-level inventory management system with barcode scanning, order processing, and supplier management.</p>
+          <div class="project-tech">
+            <span>C#</span>
+            <span>Xamarin</span>
+            <span>Azure</span>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    <section id="tech-stack">
+      <h2 class="section-title">My Tech Stack</h2>
+      <div class="tech-icons">
+        <div class="tech-icon">
+          <div class="tech-icon-circle">JS</div>
+          <span>JavaScript</span>
+        </div>
+        <div class="tech-icon">
+          <div class="tech-icon-circle">⚛️</div>
+          <span>React</span>
+        </div>
+        <div class="tech-icon">
+          <div class="tech-icon-circle">A</div>
+          <span>Angular</span>
+        </div>
+        <div class="tech-icon">
+          <div class="tech-icon-circle">N</div>
+          <span>Node.js</span>
+        </div>
+        <div class="tech-icon">
+          <div class="tech-icon-circle">C#</div>
+          <span>C#</span>
+        </div>
+        <div class="tech-icon">
+          <div class="tech-icon-circle">X</div>
+          <span>Xamarin</span>
+        </div>
+        <div class="tech-icon">
+          <div class="tech-icon-circle">RN</div>
+          <span>React Native</span>
+        </div>
+        <div class="tech-icon">
+          <div class="tech-icon-circle">SF</div>
+          <span>Salesforce</span>
+        </div>
+        <div class="tech-icon">
+          <div class="tech-icon-circle">BI</div>
+          <span>Power BI</span>
+        </div>
+        <div class="tech-icon">
+          <div class="tech-icon-circle">3D</div>
+          <span>Three.js</span>
+        </div>
+      </div>
+    </section>
+    
+    <section id="contact">
+      <h2 class="section-title">Get In Touch</h2>
+      <div class="contact">
+        <p>I'm currently looking for new opportunities, and my inbox is always open. Whether you have a question or just want to say hi, I'll try my best to get back to you!</p>
+        <a href="mailto:pierre.kamel@example.com" class="cta-button">Say Hello</a>
+      </div>
+    </section>
+    
+    <footer>
+      <p>Designed & Built by Pierre Kamel © 2025</p>
+    </footer>
+  </div>
+
+  <script>
+    // Three.js Animation
+    const initThreeJS = () => {
+      const container = document.getElementById('canvas-container');
+      
+      // Scene setup
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+      const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+      
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setClearColor(0x0a192f, 1);
+      container.appendChild(renderer.domElement);
+      
+      // Create particles
+      const particlesGeometry = new THREE.BufferGeometry();
+      const particlesCount = 1500;
+      
+      const posArray = new Float32Array(particlesCount * 3);
+      
+      for (let i = 0; i < particlesCount * 3; i++) {
+        posArray[i] = (Math.random() - 0.5) * 10;
+      }
+      
+      particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+      
+      // Materials
+      const particlesMaterial = new THREE.PointsMaterial({
+        size: 0.01,
+        color: 0x64ffda,
+        transparent: true,
+        opacity: 0.8
+      });
+      
+      // Mesh
+      const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
+      scene.add(particlesMesh);
+      
+      // Add connection lines for nearby particles
+      const lineMaterial = new THREE.LineBasicMaterial({ 
+        color: 0x64ffda,
+        transparent: true,
+        opacity: 0.1
+      });
+      
+      // Camera positioning
+      camera.position.z = 5;
+      
+      // Mouse movement effect
+      let mouseX = 0;
+      let mouseY = 0;
+      
+      document.addEventListener('mousemove', (event) => {
+        mouseX = event.clientX / window.innerWidth - 0.5;
+        mouseY = event.clientY / window.innerHeight - 0.5;
+      });
+      
+      // Handle resize
+      window.addEventListener('resize', () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      });
+      
+      // Animation loop
+      const animate = () => {
+        requestAnimationFrame(animate);
+        
+        // Rotate particles based on mouse position
+        particlesMesh.rotation.y += 0.002;
+        particlesMesh.rotation.x += 0.0005;
+        
+        // Respond to mouse movement
+        particlesMesh.rotation.y += mouseX * 0.05;
+        particlesMesh.rotation.x += mouseY * 0.05;
+        
+        renderer.render(scene, camera);
+      };
+      
+      animate();
+    };
+    
+    // Initialize Three.js after the page is loaded
+    window.addEventListener('load', initThreeJS);
+    
+    // Smooth scrolling for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+          behavior: 'smooth'
+        });
+      });
+    });
+  </script>
+</body>
+</html>
